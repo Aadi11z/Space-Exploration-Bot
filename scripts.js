@@ -1,48 +1,41 @@
-function sendMessage() {
-    const messageText = messageInput.value.trim();
-    if (messageText === '') return;
-    
-    addMessage(messageText, 'sender');
-    messageInput.value = '';
-    
-    showTypingIndicator();
-    
-    sendToBotpress(messageText);
-}
-async function sendToBotpress(message) {
-    try {
-    
-    const response = await fetch('https://your-botpress-instance.com/api/v1/bots/your-bot-id/converse/user-id', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                type: 'text',
-                text: message
-            })
-        });
-        
-        const data = await response.json();
-        
-    
-    removeTypingIndicator();
-        
-    
-    if (data.responses && data.responses.length > 0) {
-        
-        data.responses.forEach(botResponse => {
-                if (botResponse.type === 'text') {
-                    addMessage(botResponse.text, 'receiver');
-                }
-            
-        });
+window.botpressWebChat.init({
+    "botId": "YOUR_BOT_ID",
+    "clientId": "YOUR_CLIENT_ID",
+    "hostUrl": "https://cdn.botpress.cloud/webchat/v2",
+    "messagingUrl": "https://messaging.botpress.cloud",
+    "botName": "Cosmic Chat",
+    "botConversationDescription": "Your AI companion in the vastness of space",
+    "useSessionStorage": true,
+    "containerWidth": "100%",
+    "layoutWidth": "100%",
+    "hideWidget": true,
+    "disableAnimations": true,
+    "showPoweredBy": false,
+    "className": "messages-area",
+});
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+
+    function sendMessage() {
+        const message = userInput.value.trim();
+        if (message) {
+            window.botpressWebChat.sendEvent({ type: 'message', text: message });
+            userInput.value = '';
         }
-    } catch (error) {
-        console.error('Error communicating with Botpress:', error);
-        removeTypingIndicator();
-        addMessage("I'm having trouble connecting. Please try again later.", 'receiver');
     }
-    
-    messagesArea.scrollTop = messagesArea.scrollHeight;
-}
+
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    window.botpressWebChat.onEvent(function(event) {
+        if (event.type === 'LIFECYCLE.LOADED') {
+            window.botpressWebChat.sendEvent({ type: 'show' });
+        }
+    }, ['LIFECYCLE.LOADED']);
+});
