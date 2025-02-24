@@ -23,18 +23,11 @@
         <p>Your AI companion in the vastness of space</p>
       </header>
 
-      <div class="chat-container">
-        <div id="botpress-webchat" class="messages-area"></div>
-        <div class="input-area">
-          <input type="text" class="message-input" id="user-input" placeholder="Type your message here..." />
-          <button class="send-button" id="send-button">
-            <i class="fas fa-paper-plane"></i>
-          </button>
-        </div>
-      </div>
+      <iframe id="chatbot-frame" src="" style="width: 100%; height: 500px; border: none;"></iframe>
+
     </div>
 
     <script src="script.js"></script>
-    <script src="https://cdn.botpress.cloud/webchat/v2/inject.js"></script>
+    <!--  No need for Botpress inject script if we're using an iframe directly -->
   </body>
 </html>
